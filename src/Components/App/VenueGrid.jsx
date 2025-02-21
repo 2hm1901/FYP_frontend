@@ -6,7 +6,7 @@ export default function VenueGrid() {
     const [venues, setVenues] = useState([]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/getAllVenue')
+        axios.get('/api/getAllVenue')
             .then((response) => {
                 setVenues(response.data);
                 console.log(response.data);

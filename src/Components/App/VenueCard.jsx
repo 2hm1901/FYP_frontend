@@ -1,10 +1,14 @@
 import React from 'react';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import picture from '../../assets/banner.jpg';
+import { Link } from 'react-router-dom';
 
 function VenueCard({ id, image, name, rating, reviews, location, distance }) {
     return (
-        <a href={`/venueDetail/${id}`} className="block w-[300px] flex-shrink-0 bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
+        <Link 
+            to={`/venueDetail/${id}`} 
+            className="block w-[300px] flex-shrink-0 bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden"
+        >
             <div className="relative h-[200px]">
                 <img
                     src={picture}
@@ -25,7 +29,7 @@ function VenueCard({ id, image, name, rating, reviews, location, distance }) {
                     <span>{location} (~10 km)</span>
                 </div>
             </div>
-        </a>
+        </Link>
     );
 }
 
