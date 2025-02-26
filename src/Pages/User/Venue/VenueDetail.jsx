@@ -6,8 +6,10 @@ import { TabContext, TabPanel } from "@mui/lab";
 import { Card, CardContent } from "@mui/material";
 import picture from '../../../assets/banner-right.png';
 import axios from 'axios';
+import { useParams } from "react-router-dom";
 
-export default function VenueDetail({ id }) {
+export default function VenueDetail() {
+    const { id } = useParams();
     const [value, setValue] = React.useState('info');
     const [venue, setVenue] = useState(null);
 

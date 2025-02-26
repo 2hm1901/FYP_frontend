@@ -90,7 +90,9 @@ export default function Login() {
                                     value={formData.email}
                                     className="w-full"
                                     autoComplete="email"
-                                    onChange={(e) => setFormData("email", e.target.value)}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, email: e.target.value })
+                                    }
                                     required
                                 />
                                 <Mail className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground" />
@@ -109,7 +111,9 @@ export default function Login() {
                                     value={formData.password}
                                     className="w-full"
                                     autoComplete="new-password"
-                                    onChange={(e) => setFormData("password", e.target.value)}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, password: e.target.value })
+                                    }
                                     required
                                 />
                                 <button
@@ -127,7 +131,6 @@ export default function Login() {
                         <button
                             type="submit"
                             className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-                            disabled={processing}
                         >
                             Login
                         </button>

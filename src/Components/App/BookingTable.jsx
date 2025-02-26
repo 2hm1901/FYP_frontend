@@ -1,8 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SelectedSlotsInfo from './SelectedSlotsInfor';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { FaCalendarAlt } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
+import { format } from 'date-fns';
+import axios from 'axios';
 
 const BookingTable = ({ bookingTable }) => {
     const [selectedCells, setSelectedCells] = useState({});
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [bookedCourts, setBookedCourts] = useState([]);
+    const numberOfCourts = bookingTable.venue.court_count;
+    const courtNames = Array.from({ length: numberOfCourts }, (_, i) => `Sân ${i + 1}`);
+
+    useEffect(() => {
+        // Reset selected cells when the date changes
+        getBookedCourts(2, selectedDate);
+        setSelectedCells({});
+    }, [selectedDate]);
 
     const generateTimeSlots = (startHour, endHour) => {
         const slots = [];
@@ -21,15 +37,71 @@ const BookingTable = ({ bookingTable }) => {
 
     const timeSlots = generateTimeSlots(formatHourOnly(bookingTable.venue.open_time), formatHourOnly(bookingTable.venue.close_time));
 
-    const bookedSlots = {
-        "Sân 1": ["8:00", "8:30", "9:00", "9:30", "10:00"],
-        "Sân 4": ["8:00", "8:30", "9:00", "9:30", "10:00"]
+    const getBookedCourt = (bookings) => {
+        const slots = {};
+
+        bookings.forEach((booking) => {
+            booking.courts_booked.forEach((court) => {
+                const courtName = court.court_number; // "Sân 4"
+                if (!slots[courtName]) {
+                    slots[courtName] = new Set(); // Dùng Set để tránh trùng lặp
+                }
+
+                // Thêm tất cả các khung giờ từ start_time đến end_time
+                let currentTime = formatTime(court.start_time);
+                const endTime = formatTime(court.end_time);
+
+                while (currentTime !== endTime) {
+                    slots[courtName].add(currentTime);
+                    currentTime = add30Minutes(currentTime);
+                }
+            });
+        });
+
+        // Chuyển Set thành mảng và sắp xếp đúng thứ tự
+        Object.keys(slots).forEach((court) => {
+            slots[court] = Array.from(slots[court]).sort();
+        });
+
+        setBookedCourts(slots);
     };
 
-    const numberOfCourts = bookingTable.venue.court_count;
-    const courtNames = Array.from({ length: numberOfCourts }, (_, i) => `Sân ${i + 1}`);
+    // Hàm chuẩn hóa thời gian thành HH:mm
+    const formatTime = (time) => {
+        let [hour, minute] = time.split(":").map(Number);
+        return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+    };
+
+
+    // Hàm để tăng thời gian lên 30 phút
+    const add30Minutes = (time) => {
+        let [hour, minute] = time.split(":").map(Number);
+        minute += 30;
+        if (minute >= 60) {
+            hour += 1;
+            minute = 0;
+        }
+        return formatTime(`${hour}:${minute}`);
+    };
+
+    const getBookedCourts = async (courtId, selectedDate) => {
+
+        const formattedDate = selectedDate ? format(selectedDate, "dd/MM/yyyy") : null;
+
+        try {
+            const response = await axios.get(`/api/getBookedCourts/${courtId}`, {
+                params: { booking_date: formattedDate }
+            });
+            getBookedCourt(response.data);
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+        }
+    };
 
     const handleCellClick = (court, time) => {
+        if (bookedCourts[court]?.includes(formatTime(time))) {
+            return; // Nếu đã đặt rồi thì không làm gì cả
+        }
         setSelectedCells((prev) => ({
             ...prev,
             [`${court}-${time}`]: !prev[`${court}-${time}`]
@@ -87,7 +159,19 @@ const BookingTable = ({ bookingTable }) => {
 
     return (
         <div className='overflow-x-auto'>
-            <table className="border-collapse w-full">
+            <div className="mb-2">
+                <DatePicker
+                    selected={selectedDate}
+                    onChange={(date) => setSelectedDate(date)}
+                    dateFormat="dd/MM/yyyy"
+                    customInput={<button className="bg-green-500 text-white px-4 py-2 rounded flex items-center">
+                        <FaCalendarAlt className="mr-2" />
+                        {selectedDate.toLocaleDateString("en-GB")}
+                        <IoIosArrowDown className="ml-2" />
+                    </button>}
+                />
+            </div>
+            <table className="border-collapse w-1000">
                 <thead>
                     <tr className='relative'>
                         {timeSlots.map((time, index) => (
@@ -102,17 +186,16 @@ const BookingTable = ({ bookingTable }) => {
                 <tbody>
                     {courtNames.map((field) => (
                         <tr key={field}>
-                            <td className="border font-bold text-left">{field}</td>
+                            <td className="border font-normal text-left">{field}</td>
                             {timeSlots.map((time, index) => (
                                 <td
                                     key={index}
-                                    className={`border p-0 text-left cursor-pointer ${
-                                        bookedSlots[field]?.includes(time)
-                                            ? "bg-red-500"
-                                            : selectedCells[`${field}-${time}`]
+                                    className={`border p-0 text-left cursor-pointer ${bookedCourts[field]?.includes(formatTime(time))
+                                        ? "bg-red-500"
+                                        : selectedCells[`${field}-${time}`]
                                             ? "bg-green-500"
                                             : "bg-white"
-                                    }`}
+                                        }`}
                                     onClick={() => handleCellClick(field, time)}
                                 ></td>
                             ))}
@@ -120,7 +203,8 @@ const BookingTable = ({ bookingTable }) => {
                     ))}
                 </tbody>
             </table>
-            {Object.keys(selectedInfo).length > 0 && <SelectedSlotsInfo selectedInfo={selectedInfo} courtPrices={bookingTable.courtPrices} id_court={bookingTable.venue.id} />}
+
+            {Object.keys(selectedInfo).length > 0 && <SelectedSlotsInfo selectedInfo={selectedInfo} courtPrices={bookingTable.courtPrices} selectedDate={selectedDate} venueName={bookingTable.venue.name} />}
         </div>
     );
 };

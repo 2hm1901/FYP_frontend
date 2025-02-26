@@ -2,10 +2,12 @@ import React, {useState, useEffect} from 'react';
 import Layout from '../../../Layouts/Layout';
 import BookingTable from '../../../Components/App/BookingTable';
 import axios from 'axios';
+import { useParams } from "react-router-dom";
 
-const BookVenue = ({id}) => {
+const BookVenue = () => {
   const [bookingTable, setBookingTable] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { id } = useParams();
 
   useEffect(() => {
     axios.get(`/api/getBookingTable/${ id }`)

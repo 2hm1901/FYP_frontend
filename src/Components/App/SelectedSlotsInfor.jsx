@@ -1,8 +1,13 @@
 import axios from 'axios';
-import { React, usePage } from 'react';
+import { React, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AppContext } from "../../Context/AppContext";
+import {format} from 'date-fns';
 
-const SelectedSlotsInfo = ({ selectedInfo, courtPrices, id_court }) => {
-  const { auth } = usePage().props;
+const SelectedSlotsInfo = ({ selectedInfo, courtPrices, selectedDate, venueName }) => {
+  const navigate = useNavigate();
+  const { user } = useContext(AppContext);
+  const id_venue = parseInt(useParams().id, 10);
   let totalAmount1 = 0;
   let totalAmount = 0;
 
@@ -53,22 +58,18 @@ const SelectedSlotsInfo = ({ selectedInfo, courtPrices, id_court }) => {
     });
 
     return {
-      user_id: auth.user.id, // Replace with actual user ID
-      court_id: id_court, // Replace with actual court ID
+      user_id: user.id, // Convert to int
+      venue_id: id_venue, // Convert to int
+      venue_name: venueName,
       courts_booked: courtsBooked,
       total_price: totalAmount,
-      booking_date: new Date().toLocaleTimeString(), // Get the time when the user presses the booking button
+      booking_date: format(selectedDate, "dd/MM/yyyy"), // Get the time when the user presses the booking button
     };
   };
 
   const handleBooking = async () => {
     const bookingData = formatBookingData();
-    try {
-      const response = await axios.post('/api/bookCourt', bookingData);
-      console.log('Booking successful:', response.data);
-    } catch (error) {
-      console.error('Error booking court:', error);
-    }
+    navigate('/bookingInfoRenter', { state: { bookingData } });
   };
 
   return (
@@ -94,7 +95,7 @@ const SelectedSlotsInfo = ({ selectedInfo, courtPrices, id_court }) => {
         <div className="text-lg font-medium">Tổng tiền: {totalAmount} VNĐ</div>
       </div>
       <button onClick={handleBooking} className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
-        Book Now
+        Xác nhận
       </button>
     </div>
   );
