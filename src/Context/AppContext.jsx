@@ -8,6 +8,7 @@ export default function AppProvider({ children }) {
   const [user, setUser] = useState(null);
 
   async function getUser() {
+    if (!token) return;
     try {
       const res = await axios.get("/api/user", {
         headers: {
@@ -17,6 +18,12 @@ export default function AppProvider({ children }) {
       setUser(res.data);
     } catch (error) {
       console.error("Lỗi khi lấy thông tin người dùng:", error);
+      if (error.response?.status === 401) {
+        // Xử lý token không hợp lệ
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem("token");
+      }
     }
   }
 

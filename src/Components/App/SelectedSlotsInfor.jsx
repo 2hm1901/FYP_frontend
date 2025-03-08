@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AppContext } from "../../Context/AppContext";
 import {format} from 'date-fns';
 
-const SelectedSlotsInfo = ({ selectedInfo, courtPrices, selectedDate, venueName }) => {
+const SelectedSlotsInfo = ({ selectedInfo, courtPrices, selectedDate, venueName, venueLocation }) => {
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
   const id_venue = parseInt(useParams().id, 10);
@@ -61,9 +61,11 @@ const SelectedSlotsInfo = ({ selectedInfo, courtPrices, selectedDate, venueName 
       user_id: user.id, // Convert to int
       venue_id: id_venue, // Convert to int
       venue_name: venueName,
+      venue_location: venueLocation,
       courts_booked: courtsBooked,
       total_price: totalAmount,
       booking_date: format(selectedDate, "dd/MM/yyyy"), // Get the time when the user presses the booking button
+      status: "awaiting",
     };
   };
 

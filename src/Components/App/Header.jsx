@@ -49,7 +49,7 @@ const Header = () => {
             <GiTennisCourt className="mr-2 text-2xl" /> Đặt sân
           </Link>
           {user && (
-            <Link to="/" className="text-white hover:text-green-300 text-lg flex items-center">
+            <Link to="/dashboard" className="text-white hover:text-green-300 text-lg flex items-center">
               <FaTasks className="mr-2 text-2xl" /> Quản lý sân
             </Link>
           )}
@@ -67,10 +67,10 @@ const Header = () => {
 
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
-                  <Link to="/" className="block px-4 py-2 text-gray-800 hover:bg-gray-200 flex items-center">
+                  <Link to="/" className="px-4 py-2 text-gray-800 hover:bg-gray-200 flex items-center">
                     <FaTasks className="mr-2" /> Quản lý sân
                   </Link>
-                  <Link to="/" className="block px-4 py-2 text-gray-800 hover:bg-gray-200 flex items-center">
+                  <Link to="/" className="px-4 py-2 text-gray-800 hover:bg-gray-200 flex items-center">
                     <FaUser className="mr-2" /> Hồ sơ
                   </Link>
                   <button

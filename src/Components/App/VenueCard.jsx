@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaMapMarkerAlt } from 'react-icons/fa';
-import picture from '../../assets/banner.jpg';
+import picture from '../../assets/image1.png';
 import { Link } from 'react-router-dom';
 
 function VenueCard({ id, image, name, rating, reviews, location, distance }) {

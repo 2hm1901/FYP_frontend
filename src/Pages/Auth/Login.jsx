@@ -17,15 +17,12 @@ export default function Login() {
     });
 
     const [errors, setErrors] = useState({});
-
     const [showPassword, setShowPassword] = useState(false);
 
     async function handleLogin(e) {
         e.preventDefault();
-
         try {
             const { data } = await axios.post("/api/login", formData);
-
             if (data.errors) {
                 setErrors(data.errors);
             } else {
@@ -34,7 +31,7 @@ export default function Login() {
                 navigate("/");
             }
         } catch (error) {
-            console.error("Registration failed:", error);
+            console.error("Login failed:", error);
             if (error.response && error.response.data.errors) {
                 setErrors(error.response.data.errors);
             }
@@ -42,7 +39,7 @@ export default function Login() {
     }
 
     return (
-        <div className="grid min-h-screen md:grid-cols-2">
+        <div className="grid min-h-screen bg-gray-50 md:grid-cols-2">
             {/* Left Section - Hero */}
             <div className="relative hidden md:block">
                 <div
@@ -51,65 +48,62 @@ export default function Login() {
                         backgroundImage: `url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-cuqYLUCKi1elKqWua74DxQGbcH7r13.png')`,
                     }}
                 />
-                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white p-8 text-center">
-                    <div className="max-w-md space-y-4">
-                        <div className="inline-block bg-[#9deb3b] rounded-lg px-6 py-3">
-                            <div className="flex items-center gap-2 text-black font-semibold text-xl">
-                                <ThumbsUp className="h-6 w-6" />
-                                Login Now
-                            </div>
+                <div className="absolute inset-0 bg-gradient-to-br from-black/70 to-black/40 flex flex-col items-center justify-center text-white p-8 text-center">
+                    <div className="max-w-md space-y-6">
+                        <div className="inline-flex items-center gap-2 bg-[#9deb3b] rounded-full px-6 py-3 shadow-lg">
+                            <ThumbsUp className="h-6 w-6 text-black" />
+                            <span className="text-black font-semibold text-xl">Login Now</span>
                         </div>
-                        <h1 className="text-4xl font-bold">Welcome to Our Platform</h1>
-                        <p className="text-lg">
-                            Join us today and start enjoying our services.
+                        <h1 className="text-4xl font-extrabold tracking-tight">Welcome to DreamSports</h1>
+                        <p className="text-lg leading-relaxed">
+                            Ignite your sports journey and unlock a world of opportunities.
                         </p>
                     </div>
                 </div>
             </div>
 
             {/* Right Section - Form */}
-            <div className="flex items-center justify-center p-8">
-                <div className="w-full max-w-md space-y-8">
-                    <div className="text-center space-y-2">
-                        <h1 className="text-3xl font-bold">Get Started With Dreamsports</h1>
-                        <p className="text-muted-foreground">
-                            Ignite your sports journey with DreamSports and get started now.
+            <div className="flex items-center justify-center p-6 md:p-8">
+                <div className="w-full max-w-md space-y-8 bg-white rounded-xl shadow-lg p-8">
+                    <div className="text-center space-y-3">
+                        <h1 className="text-3xl font-bold text-gray-900">Sign In</h1>
+                        <p className="text-gray-600 text-sm">
+                            Log in to your DreamSports account and get started.
                         </p>
                     </div>
 
-                    <form className="space-y-4" onSubmit={handleLogin}>
-
+                    <form className="space-y-6" onSubmit={handleLogin}>
                         {/* Email */}
                         <div className="space-y-2">
-                            <InputLabel htmlFor="email" value="Email" />
+                            <label htmlFor="email" value="Email" className="text-sm font-medium text-gray-700" />
                             <div className="relative">
-                                <TextInput
+                                <input
                                     id="email"
                                     type="email"
                                     name="email"
                                     value={formData.email}
-                                    className="w-full"
+                                    className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
                                     autoComplete="email"
                                     onChange={(e) =>
                                         setFormData({ ...formData, email: e.target.value })
                                     }
                                     required
                                 />
-                                <Mail className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                                <Mail className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                             </div>
-                            <InputError message={errors.email} />
+                            <InputError message={errors.email} className="text-red-600 text-sm" />
                         </div>
 
                         {/* Password */}
                         <div className="space-y-2">
-                            <InputLabel htmlFor="password" value="Password" />
+                            <label htmlFor="password" value="Password" className="text-sm font-medium text-gray-700" />
                             <div className="relative">
-                                <TextInput
+                                <input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     name="password"
                                     value={formData.password}
-                                    className="w-full"
+                                    className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
                                     autoComplete="new-password"
                                     onChange={(e) =>
                                         setFormData({ ...formData, password: e.target.value })
@@ -119,22 +113,33 @@ export default function Login() {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-2.5"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                                 >
-                                    {showPassword ? <EyeOff className="h-5 w-5 text-muted-foreground" /> : <Eye className="h-5 w-5 text-muted-foreground" />}
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5" />
+                                    ) : (
+                                        <Eye className="h-5 w-5" />
+                                    )}
                                 </button>
                             </div>
-                            <InputError message={errors.password} />
+                            <InputError message={errors.password} className="text-red-600 text-sm" />
                         </div>
 
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="w-full py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Login
+                            Sign In
                         </button>
                     </form>
+
+                    <p className="text-center text-sm text-gray-600">
+                        Don’t have an account?{" "}
+                        <a href="/register" className="text-indigo-600 hover:underline font-medium">
+                            Sign up
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>

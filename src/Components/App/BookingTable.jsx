@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import axios from 'axios';
 
 const BookingTable = ({ bookingTable }) => {
+
     const [selectedCells, setSelectedCells] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [bookedCourts, setBookedCourts] = useState([]);
@@ -16,26 +17,34 @@ const BookingTable = ({ bookingTable }) => {
 
     useEffect(() => {
         // Reset selected cells when the date changes
-        getBookedCourts(2, selectedDate);
+        getBookedCourts(bookingTable.venue.id, selectedDate);
         setSelectedCells({});
     }, [selectedDate]);
 
-    const generateTimeSlots = (startHour, endHour) => {
+    const generateTimeSlots = (startTime, endTime) => {
         const slots = [];
-        for (let hour = startHour; hour <= endHour; hour++) {
-            slots.push(`${hour}:00`);
-            if (hour < endHour) {
-                slots.push(`${hour}:30`);
-            }
+    
+        // Tách giờ và phút từ startTime và endTime
+        const [startHour, startMinute] = startTime.split(":").map(Number);
+        const [endHour, endMinute] = endTime.split(":").map(Number);
+    
+        // Chuyển đổi thời gian bắt đầu và kết thúc thành số phút để dễ tính toán
+        const startTotalMinutes = startHour * 60 + startMinute;
+        const endTotalMinutes = endHour * 60 + endMinute;
+    
+        // Tạo các slot cách nhau 30 phút từ startTime đến endTime
+        for (let minutes = startTotalMinutes; minutes <= endTotalMinutes; minutes += 30) {
+            const hour = Math.floor(minutes / 60);
+            const minute = minutes % 60;
+            // Định dạng lại thành chuỗi "HH:mm"
+            const timeSlot = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+            slots.push(timeSlot);
         }
+    
         return slots;
     };
 
-    const formatHourOnly = (time) => {
-        return parseInt(time.split(":")[0], 10);
-    };
-
-    const timeSlots = generateTimeSlots(formatHourOnly(bookingTable.venue.open_time), formatHourOnly(bookingTable.venue.close_time));
+    const timeSlots = generateTimeSlots(bookingTable.venue.open_time, bookingTable.venue.close_time);
 
     const getBookedCourt = (bookings) => {
         const slots = {};
@@ -71,7 +80,6 @@ const BookingTable = ({ bookingTable }) => {
         let [hour, minute] = time.split(":").map(Number);
         return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
     };
-
 
     // Hàm để tăng thời gian lên 30 phút
     const add30Minutes = (time) => {
@@ -204,7 +212,7 @@ const BookingTable = ({ bookingTable }) => {
                 </tbody>
             </table>
 
-            {Object.keys(selectedInfo).length > 0 && <SelectedSlotsInfo selectedInfo={selectedInfo} courtPrices={bookingTable.courtPrices} selectedDate={selectedDate} venueName={bookingTable.venue.name} />}
+            {Object.keys(selectedInfo).length > 0 && <SelectedSlotsInfo selectedInfo={selectedInfo} courtPrices={bookingTable.courtPrices} selectedDate={selectedDate} venueName={bookingTable.venue.name} venueLocation={bookingTable.venue.location}/>}
         </div>
     );
 };
