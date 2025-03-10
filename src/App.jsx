@@ -7,6 +7,7 @@ import './App.css'
 import Index from './Pages/User/Index';
 import Login from './Pages/Auth/Login';
 import Register from './Pages/Auth/Register';
+import VerifyEmail from './Pages/Auth/VerifyEmail';
 import Settings from './Pages/Profile/Settings';
 import GameList from './Pages/User/Game/GameList';
 import GameDetail from './Pages/User/Game/GameDetail';
@@ -29,6 +30,7 @@ export default function App() {
 
       <Route path="/login" element={user ? <Index/> : <Login />} />
       <Route path="/register" element={user ? <Index/> : <Register />} />
+      <Route path="/email/verify/:id/:hash" element={<VerifyEmail/>} />
 
       <Route path="/profile" element={<Settings />} />
 

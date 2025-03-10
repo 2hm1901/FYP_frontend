@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
 import InputError from "../../Components/Ui/InputError";
-import InputLabel from "../../Components/Ui/InputLabel";
-import TextInput from "../../Components/Ui/TextInput";
 import { ThumbsUp, User, Mail, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AppContext } from "../../Context/AppContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS cho toast
 
 export default function Register() {
     const { setToken } = useContext(AppContext);
@@ -26,18 +26,23 @@ export default function Register() {
     async function handleRegister(e) {
         e.preventDefault();
         try {
-            const { data } = await axios.post("/api/register", formData);
+            const { data } = await axios.post("/api/register", formData); // Thay bằng URL API của bạn
             if (data.errors) {
                 setErrors(data.errors);
+                toast.error("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.");
             } else {
-                localStorage.setItem("token", data.token);
-                setToken(data.token);
-                navigate("/");
+                // Hiển thị toast thành công và chuyển hướng sau 2 giây
+                toast.success(data.message || "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.", {
+                    onClose: () => navigate("/login"),
+                    autoClose: 2000,
+                });
+                setErrors({});
             }
         } catch (error) {
             console.error("Registration failed:", error);
             if (error.response && error.response.data.errors) {
                 setErrors(error.response.data.errors);
+                toast.error("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.");
             }
         }
     }
@@ -79,7 +84,9 @@ export default function Register() {
                     <form className="space-y-6" onSubmit={handleRegister}>
                         {/* Username */}
                         <div className="space-y-2">
-                            <label htmlFor="username" value="Username" className="text-sm font-medium text-gray-700" />
+                            <label htmlFor="username" className="text-sm font-medium text-gray-700">
+                                Username
+                            </label>
                             <div className="relative">
                                 <input
                                     id="username"
@@ -98,7 +105,9 @@ export default function Register() {
 
                         {/* Email */}
                         <div className="space-y-2">
-                            <label htmlFor="email" value="Email" className="text-sm font-medium text-gray-700" />
+                            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                                Email
+                            </label>
                             <div className="relative">
                                 <input
                                     id="email"
@@ -119,7 +128,9 @@ export default function Register() {
 
                         {/* Password */}
                         <div className="space-y-2">
-                            <label htmlFor="password" value="Password" className="text-sm font-medium text-gray-700" />
+                            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                                Password
+                            </label>
                             <div className="relative">
                                 <input
                                     id="password"
@@ -146,7 +157,9 @@ export default function Register() {
 
                         {/* Confirm Password */}
                         <div className="space-y-2">
-                            <label htmlFor="password_confirmation" value="Confirm Password" className="text-sm font-medium text-gray-700" />
+                            <label htmlFor="password_confirmation" className="text-sm font-medium text-gray-700">
+                                Confirm Password
+                            </label>
                             <div className="relative">
                                 <input
                                     id="password_confirmation"
@@ -173,7 +186,9 @@ export default function Register() {
 
                         {/* User Type */}
                         <div className="space-y-2">
-                            <label htmlFor="user_type" value="User Type" className="text-sm font-medium text-gray-700" />
+                            <label htmlFor="user_type" className="text-sm font-medium text-gray-700">
+                                User Type
+                            </label>
                             <select
                                 id="user_type"
                                 name="user_type"
@@ -203,6 +218,9 @@ export default function Register() {
                     </p>
                 </div>
             </div>
+
+            {/* Thêm ToastContainer để hiển thị toast */}
+            <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} closeOnClick pauseOnHover />
         </div>
     );
 }

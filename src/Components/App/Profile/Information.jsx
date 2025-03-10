@@ -2,22 +2,32 @@ import React, { useContext, useEffect, useState } from "react";
 import { Pencil } from "lucide-react";
 import axios from "axios";
 import { AppContext } from "../../../Context/AppContext";
-import { set } from "date-fns";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Information({ handleFileChange }) {
   const { user, token, setUser } = useContext(AppContext);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [formData, setFormData] = useState({
-    username: user?.username || "",
-    email: user?.email || "",
-    phone_number: user?.phone_number || "",
-    skill_level: user?.skill_level || "",
-    avatar: user?.avatar || "",
+    username: "",
+    email: "",
+    phone_number: "",
+    skill_level: "",
+    avatar: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Đồng bộ formData với user
   useEffect(() => {
-    if (user?.avatar) {
-      setPhotoPreview("http://localhost:8000" + user.avatar);
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        email: user.email || "",
+        phone_number: user.phone_number || "",
+        skill_level: user.skill_level || "",
+        avatar: user.avatar || "",
+      });
+      setPhotoPreview(`http://localhost:8000${user.avatar}`);
     }
   }, [user]);
 
@@ -30,19 +40,25 @@ export default function Information({ handleFileChange }) {
   };
 
   const handleSubmit = async () => {
+    if (!token) return;
+    setIsLoading(true);
     try {
-      const response = await axios.put("/api/updateProfile", formData,{
+      console.log(formData);
+      const response = await axios.put("/api/updateProfile", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data.message);
       setUser(response.data.user);
-      window.location.reload();
-      // Handle success (e.g., show a success message, update context, etc.)
+      toast.success("Thông tin đã được cập nhật thành công!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       console.error("Error updating profile:", error);
-      // Handle error (e.g., show an error message)
+      toast.error(error.response?.data?.message || "Không thể cập nhật thông tin");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,7 +71,7 @@ export default function Information({ handleFileChange }) {
             <div className="flex h-full w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-white p-4 transition-all duration-300 group-hover:border-indigo-400 group-hover:shadow-lg">
               {photoPreview ? (
                 <img
-                  src={photoPreview || "/placeholder.svg"}
+                  src={photoPreview}
                   alt="Profile preview"
                   className="h-full w-full object-contain rounded-xl"
                 />
@@ -73,7 +89,7 @@ export default function Information({ handleFileChange }) {
                       strokeLinejoin="round"
                       strokeWidth="1.5"
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    ></path>
+                    />
                   </svg>
                   <span className="text-gray-500 font-medium transition-colors duration-300 group-hover:text-indigo-600">
                     Upload Photo
@@ -94,6 +110,10 @@ export default function Information({ handleFileChange }) {
               handleFileChange(e);
               const file = e.target.files?.[0];
               if (file) {
+                if (file.size > 1024 * 1024) {
+                  toast.error("Ảnh phải nhỏ hơn 1MB!");
+                  return;
+                }
                 const reader = new FileReader();
                 reader.onloadend = () => {
                   setPhotoPreview(reader.result);
@@ -114,9 +134,8 @@ export default function Information({ handleFileChange }) {
 
       {/* Form Fields */}
       <div className="grid gap-6 md:grid-cols-2 mt-8">
-        {/* Name Field */}
         <div className="flex flex-col">
-          <label htmlFor="name" className="mb-2 font-semibold text-gray-700">
+          <label htmlFor="username" className="mb-2 font-semibold text-gray-700">
             Tên
           </label>
           <input
@@ -128,8 +147,7 @@ export default function Information({ handleFileChange }) {
             className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none transition-all duration-300"
           />
         </div>
-
-        {/* Email Field */}
+        {/* Các field khác giữ nguyên */}
         <div className="flex flex-col">
           <label htmlFor="email" className="mb-2 font-semibold text-gray-700">
             Email
@@ -143,10 +161,8 @@ export default function Information({ handleFileChange }) {
             className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none transition-all duration-300"
           />
         </div>
-
-        {/* Phone Field */}
         <div className="flex flex-col">
-          <label htmlFor="phone" className="mb-2 font-semibold text-gray-700">
+          <label htmlFor="phone_number" className="mb-2 font-semibold text-gray-700">
             Số điện thoại
           </label>
           <input
@@ -158,10 +174,8 @@ export default function Information({ handleFileChange }) {
             className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none transition-all duration-300"
           />
         </div>
-
-        {/* Skill Level Field */}
         <div className="flex flex-col">
-          <label htmlFor="skillLevel" className="mb-2 font-semibold text-gray-700">
+          <label htmlFor="skill_level" className="mb-2 font-semibold text-gray-700">
             Trình độ
           </label>
           <select
@@ -187,11 +201,13 @@ export default function Information({ handleFileChange }) {
       <div className="mt-10 flex justify-end space-x-4">
         <button
           onClick={handleSubmit}
-          className="rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-indigo-600 hover:shadow-lg transform hover:-translate-y-0.5"
+          disabled={isLoading}
+          className={`rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-indigo-600 hover:shadow-lg transform hover:-translate-y-0.5 ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
         >
-          Save Change
+          {isLoading ? "Saving..." : "Save Change"}
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 }
