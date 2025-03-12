@@ -140,6 +140,12 @@ export default function Login() {
                             Sign up
                         </a>
                     </p>
+                    <p className="text-center text-sm text-gray-600">
+                        Don’t remember your password?{" "}
+                        <a href="/forgot-password" className="text-indigo-600 hover:underline font-medium">
+                            Reset Password
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>

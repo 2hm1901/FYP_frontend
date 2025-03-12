@@ -7,6 +7,8 @@ import './App.css'
 import Index from './Pages/User/Index';
 import Login from './Pages/Auth/Login';
 import Register from './Pages/Auth/Register';
+import ForgotPassword from './Pages/Auth/ForgotPassword';
+import ResetPassword from './Pages/Auth/ResetPassword';
 import VerifyEmail from './Pages/Auth/VerifyEmail';
 import Settings from './Pages/Profile/Settings';
 import GameList from './Pages/User/Game/GameList';
@@ -31,6 +33,9 @@ export default function App() {
       <Route path="/login" element={user ? <Index/> : <Login />} />
       <Route path="/register" element={user ? <Index/> : <Register />} />
       <Route path="/email/verify/:id/:hash" element={<VerifyEmail/>} />
+
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route path="/profile" element={<Settings />} />
 
