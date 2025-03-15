@@ -4,10 +4,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AppContext } from "../../Context/AppContext";
 import {format} from 'date-fns';
 
-const SelectedSlotsInfo = ({ selectedInfo, courtPrices, selectedDate, venueName, venueLocation }) => {
+const SelectedSlotsInfo = ({ selectedInfo, courtPrices, selectedDate, venueName, venueLocation, venueId }) => {
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
-  const id_venue = parseInt(useParams().id, 10);
+  const id_venue = venueId;
   let totalAmount1 = 0;
   let totalAmount = 0;
 

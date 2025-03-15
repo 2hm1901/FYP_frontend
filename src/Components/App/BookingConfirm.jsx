@@ -17,7 +17,7 @@ export default function BookingConfirm() {
 
             if (response.status === 201) {
                 console.log("Booking court successful:", response.data);
-                setIsOpen(true); // Hiển thị Dialog nếu response trả về 201
+                setIsOpen(true); 
             } else {
                 console.error("Unexpected response:", response);
             }

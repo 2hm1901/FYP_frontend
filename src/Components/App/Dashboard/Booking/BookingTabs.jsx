@@ -1,6 +1,6 @@
 import React from "react";
 export default function BookingTabs({ activeTab, setActiveTab }) {
-    const tabs = ["Sắp tới", "Đã hoàn thành", "Đã huỷ"];
+    const tabs = ["Sắp tới", "Đã huỷ"];
     return (
       <div className="mb-8 flex gap-2 bg-gray-50 p-2 rounded-lg">
         {tabs.map((tab) => (

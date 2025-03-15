@@ -7,19 +7,19 @@ import { IoIosArrowDown } from "react-icons/io";
 import { format } from 'date-fns';
 import axios from 'axios';
 
-const BookingTable = ({ bookingTable }) => {
+const BookingTable = ({ venue, courtPrices }) => {
 
     const [selectedCells, setSelectedCells] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [bookedCourts, setBookedCourts] = useState([]);
-    const numberOfCourts = bookingTable.venue.court_count;
+    const numberOfCourts = venue.court_count;
     const courtNames = Array.from({ length: numberOfCourts }, (_, i) => `Sân ${i + 1}`);
 
     useEffect(() => {
         // Reset selected cells when the date changes
-        getBookedCourts(bookingTable.venue.id, selectedDate);
+        getBookedCourts(venue.id, selectedDate);
         setSelectedCells({});
-    }, [selectedDate]);
+    }, [selectedDate, venue, courtPrices]);
 
     const generateTimeSlots = (startTime, endTime) => {
         const slots = [];
@@ -44,7 +44,7 @@ const BookingTable = ({ bookingTable }) => {
         return slots;
     };
 
-    const timeSlots = generateTimeSlots(bookingTable.venue.open_time, bookingTable.venue.close_time);
+    const timeSlots = generateTimeSlots(venue.open_time, venue.close_time);
 
     const getBookedCourt = (bookings) => {
         const slots = {};
@@ -212,7 +212,15 @@ const BookingTable = ({ bookingTable }) => {
                 </tbody>
             </table>
 
-            {Object.keys(selectedInfo).length > 0 && <SelectedSlotsInfo selectedInfo={selectedInfo} courtPrices={bookingTable.courtPrices} selectedDate={selectedDate} venueName={bookingTable.venue.name} venueLocation={bookingTable.venue.location}/>}
+            {Object.keys(selectedInfo).length > 0 && 
+            <SelectedSlotsInfo 
+            selectedInfo={selectedInfo} 
+            courtPrices={courtPrices} 
+            selectedDate={selectedDate} 
+            venueName={venue.name} 
+            venueLocation={venue.location}
+            venueId={venue.id}/>
+            }
         </div>
     );
 };

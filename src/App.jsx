@@ -22,6 +22,10 @@ import BookingInfoRenter from './Pages/User/Booking/InfoRenter';
 import Dashboard from './Pages/User/Manager/Renter/Booking/Dashboard';
 import BookedCourt from './Pages/User/Manager/Renter/Booking/BookedCourt';
 import ListGame from './Pages/User/Manager/Renter/Games/ListGame';
+import ListBooking from './Pages/User/Manager/Owner/Booking/List';
+import ListRequest from './Pages/User/Manager/Owner/Request/List';
+
+import ShowCourt from './Pages/User/Manager/Owner/Court/ShowCourt';
 
 export default function App() {
   const { user } = useContext(AppContext);
@@ -53,6 +57,14 @@ export default function App() {
 
       <Route path="/game" element={<GameList />} />
       <Route path="/gameDetail" element={<GameDetail />} />
+
+      {/* Owner */}
+
+      <Route path="/my_courts" element={<ShowCourt />} />
+      <Route path='/view_bookings' element={<ListBooking />} />
+      <Route path='/requests' element={<ListRequest />} />
+
+
     </Routes>
   </BrowserRouter>
   );

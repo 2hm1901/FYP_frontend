@@ -8,7 +8,6 @@ import axios from "axios";
 export default function BookedRow({
   id,
   venue_id,
-  image,
   name,
   location,
   court,
@@ -16,11 +15,13 @@ export default function BookedRow({
   time,
   payment,
   status,
+  onOpenChat,
 }) {
   const [showDetail, setShowDetail] = useState(false);
   const [showFormHiring, setShowFormHiring] = useState(false);
   const [isRecruited, setIsRecruited] = useState(false);
   const { user } = useContext(AppContext);
+  const [owner, setOwner] = useState(null);
 
   useEffect(() => {
     const checkRecruitmentStatus = async () => {
@@ -35,6 +36,24 @@ export default function BookedRow({
     };
     checkRecruitmentStatus();
   }, [id]);
+
+  // Fetch venue và owner info dựa trên venue_id
+  useEffect(() => {
+    const fetchVenueOwnerInfo = async () => {
+      try {
+        const response = await axios.get('/api/venue-owner', {
+          params: { venue_id: venue_id },
+        });
+        if (response.data.success) {
+          console.log(response.data.data);
+          setOwner(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching venue and owner info:", error);
+      }
+    };
+    fetchVenueOwnerInfo();
+  }, [venue_id]);
 
   const handleViewDetails = () => {
     setShowDetail(true);
@@ -52,12 +71,16 @@ export default function BookedRow({
     setShowFormHiring(false);
   }
 
+  const handleOpenChatClick = () => {
+    onOpenChat(owner?.id); // Gửi user_id lên Table
+  };
+
   return (
     <>
       <tr>
         <td className="whitespace-nowrap px-6 py-4 flex items-center gap-3">
           <img
-            src={image || "/placeholder.svg"}
+            src={owner?.avatar ? `http://localhost:8000${owner.avatar}` : "/placeholder.svg"}
             alt={name}
             className="w-12 h-12 rounded-lg"
           />
@@ -76,8 +99,8 @@ export default function BookedRow({
         <td className="whitespace-nowrap px-6 py-4">
           <span
             className={`inline-flex items-center gap-1 rounded-full px-3 py-1 ${status === "awaiting"
-                ? "bg-purple-100 text-purple-600"
-                : "bg-green-100 text-green-600"
+              ? "bg-purple-100 text-purple-600"
+              : "bg-green-100 text-green-600"
               }`}
           >
             <span
@@ -97,7 +120,10 @@ export default function BookedRow({
           </button>
         </td>
         <td className="whitespace-nowrap px-6 py-4">
-          <button className="inline-flex items-center gap-1 text-gray-600">
+          <button
+            className="inline-flex items-center gap-1 text-gray-600"
+            onClick={handleOpenChatClick}
+          >
             <MessageCircle className="h-4 w-4" />
             Chat
           </button>
@@ -106,11 +132,10 @@ export default function BookedRow({
           <button
             onClick={handleViewFormHiring}
             disabled={isRecruited || status === "awaiting"}
-            className={`flex items-center gap-2 px-4 py-2 rounded text-white ${
-              isRecruited || status === "awaiting"
+            className={`flex items-center gap-2 px-4 py-2 rounded text-white ${isRecruited || status === "awaiting"
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-500 hover:bg-blue-600"
-            }`}
+              }`}
           >
             <UserPlus className="h-4 w-4" />
             <span>{isRecruited ? "Đã tuyển" : "Tuyển"}</span>
@@ -120,7 +145,7 @@ export default function BookedRow({
           {showDetail && (
             <BookingDetail
               onClose={handleCloseDetail}
-              image={image}
+              image={owner?.avatar ? `http://localhost:8000${owner.avatar}` : "/placeholder.svg"}
               name={name}
               location={location}
               court={court}
