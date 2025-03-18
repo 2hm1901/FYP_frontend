@@ -20,6 +20,4 @@ const echo = new Echo({
     
 });
 
-console.log(echo);
-
 export default echo;

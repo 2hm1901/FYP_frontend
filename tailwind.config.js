@@ -6,6 +6,7 @@ export default {
   ],
   theme: {
     extend: {
+      scrollbar: ['rounded'],
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

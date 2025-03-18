@@ -1,38 +1,31 @@
-import React, { useState, useContext } from "react";
-import { GiShuttlecock, GiTennisRacket, GiTennisCourt } from "react-icons/gi";
-import { FaUser, FaUserCog, FaSignOutAlt, FaTasks, FaBell } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import logo1 from "../../assets/logo1-removebg-preview.png";
-import { AppContext } from "../../Context/AppContext";
+import React, { useState, useContext } from 'react';
+import { GiShuttlecock, GiTennisRacket, GiTennisCourt } from 'react-icons/gi';
+import { FaUser, FaUserCog, FaSignOutAlt, FaTasks } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import logo1 from '../../assets/logo1-removebg-preview.png';
+import { AppContext } from '../../Context/AppContext';
+import NotificationDropdown from '../Notification/NotificationDropdown';
 
 const Header = ({ notifications, setNotifications }) => {
     const { user, token, setUser, setToken } = useContext(AppContext);
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
-    const [notifOpen, setNotifOpen] = useState(false);
 
     async function handleLogout(e) {
         e.preventDefault();
         try {
-            await axios.post("/api/logout", null, {
+            await axios.post('/api/logout', null, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUser(null);
             setToken(null);
-            navigate("/");
+            localStorage.removeItem('token');
+            navigate('/');
         } catch (error) {
-            console.error("Logout failed:", error);
+            console.error('Logout failed:', error);
         }
     }
-
-    const handleClearNotification = (id) => {
-        setNotifications((prev) => {
-            const updatedNotifs = prev.filter((notif) => notif.id !== id);
-            localStorage.setItem(`notifications_${user.id}`, JSON.stringify(updatedNotifs));
-            return updatedNotifs;
-        });
-    };
 
     return (
         <header className="bg-green-800 p-1 sticky top-0 z-50">
@@ -60,7 +53,6 @@ const Header = ({ notifications, setNotifications }) => {
                 </nav>
 
                 <div className="flex space-x-4 mr-10 relative items-center">
-
                     {user ? (
                         <div className="relative">
                             <button
@@ -92,45 +84,12 @@ const Header = ({ notifications, setNotifications }) => {
                         </Link>
                     )}
                     {user && (
-                        <div className="relative">
-                            <button
-                                onClick={() => setNotifOpen(!notifOpen)}
-                                className="text-white hover:text-green-300 relative"
-                            >
-                                <FaBell className="text-2xl" />
-                                {notifications.filter(n => !n.isRead).length > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                                        {notifications.filter(n => !n.isRead).length}
-                                    </span>
-                                )}
-                            </button>
-
-                            {notifOpen && (
-                                <div className="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg z-50 max-h-80 overflow-y-auto">
-                                    {notifications.length === 0 ? (
-                                        <div className="px-4 py-2 text-gray-800">Không có thông báo</div>
-                                    ) : (
-                                        notifications.map((notif) => (
-                                            <div
-                                                key={notif.id}
-                                                className={`px-4 py-2 ${notif.isRead ? 'text-gray-500' : 'text-gray-800'} hover:bg-gray-100 flex justify-between items-center`}
-                                            >
-                                                <div>
-                                                    <p>{notif.message}</p>
-                                                    <p className="text-xs">{notif.timestamp}</p>
-                                                </div>
-                                                <button
-                                                    onClick={() => handleClearNotification(notif.id)}
-                                                    className="text-red-600 hover:text-red-800"
-                                                >
-                                                    X
-                                                </button>
-                                            </div>
-                                        ))
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                        <NotificationDropdown
+                            notifications={notifications}
+                            setNotifications={setNotifications}
+                            token={token}
+                            user={user}
+                        />
                     )}
                 </div>
             </div>
