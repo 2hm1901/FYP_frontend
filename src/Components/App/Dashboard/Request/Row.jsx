@@ -111,7 +111,7 @@ export default function Row({
                   </button>
                   <button className="inline-flex items-center justify-center rounded-xl bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                     <X className="mr-1 h-4 w-4" />
-                    Cancel
+                    Decline
                   </button>
                 </div>
               </td>

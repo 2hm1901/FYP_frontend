@@ -25,7 +25,7 @@ export default function BookedCourt() {
                 status = ["awaiting", "accepted"];
                 break;
             case "Đã huỷ":
-                status = ["cancel"];
+                status = ["cancelled"];
                 break;
             default:
                 status = ["awaiting", "accepted"];
@@ -53,7 +53,7 @@ export default function BookedCourt() {
                         </div>
                         <BookingTabs activeTab={activeTab} setActiveTab={setActiveTab} />
                     </div>
-                    <BookedTable bookings={bookings} />
+                    <BookedTable bookings={bookings} tab={activeTab} />
                     <Pagination />
                 </div>
             </div>

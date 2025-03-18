@@ -24,13 +24,13 @@ export default function BookedCourt() {
         let status;
         switch (activeTab) {
             case "Sắp tới":
-                status = ["awaiting", "accepted"];
+                status = ["accepted"];
                 break;
             case "Đã huỷ":
-                status = ["cancel"];
+                status = ["cancelled"];
                 break;
             default:
-                status = ["awaiting", "accepted"];
+                status = ["accepted"];
         }
 
         try {
@@ -64,7 +64,7 @@ export default function BookedCourt() {
                             <p className="text-gray-500">Đang tải dữ liệu...</p>
                         </div>
                     ) : bookings.length > 0 ? (
-                        <Table bookings={bookings} />
+                        <Table bookings={bookings} tab={activeTab} />
                     ) : (
                         <div className="text-center py-4">
                             <p className="text-gray-500">Không có đặt sân nào trong trạng thái này.</p>

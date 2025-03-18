@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import BookedRow from "./BookingRow";
 import ChatComponent from "../../Chat/ChatComponent";
 
-export default function BookingTable({ bookings }) {
+export default function BookingTable({ bookings, tab }) {
   const [values, setValues] = useState([]);
     const [showChat, setShowChat] = useState(false); // Trạng thái hiển thị chat
     const [selectedUserId, setSelectedUserId] = useState(null);
@@ -25,7 +25,9 @@ export default function BookingTable({ bookings }) {
         date: data.booking_date,
         time: `${formatTime(court.start_time)} - ${formatTime(court.end_time)}`,
         payment: `${court.price} VNĐ`,
-        status: data.status
+        status: court.status,
+        note: data.note,
+        tab: tab,
       };
     });
   };
@@ -68,11 +70,21 @@ export default function BookingTable({ bookings }) {
       <table className="w-full">
         <thead className="bg-gray-50 text-sm">
           <tr>
-            {['Tên sân', 'Ngày & Giờ', 'Thanh toán', 'Tráng thái', 'Chi tiết', 'Nhắn tin', 'Tuyển người'].map((heading) => (
-              <th key={heading} className="whitespace-nowrap px-6 py-4 text-left font-medium text-gray-500">
-                {heading}
-              </th>
-            ))}
+            {tab === "Sắp tới" && (
+              ['Tên sân', 'Ngày & Giờ', 'Thanh toán', 'Tráng thái', 'Chi tiết', 'Nhắn tin', 'Tuyển người'].map((heading) => (
+                <th key={heading} className="whitespace-nowrap px-6 py-4 text-left font-medium text-gray-500">
+                  {heading}
+                </th>
+              ))
+            )}
+            {tab === "Đã huỷ" && (
+              ['Tên sân', 'Ngày & Giờ', 'Thanh toán', 'Trạng thái', 'Nhắn tin'].map((heading) => (
+                <th key={heading} className="whitespace-nowrap px-6 py-4 text-left font-medium text-gray-500">
+                  {heading}
+                </th>
+              ))
+            )}
+            
           </tr>
         </thead>
         <tbody className="divide-y text-sm">

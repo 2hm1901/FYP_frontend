@@ -15,7 +15,9 @@ export default function BookedRow({
   time,
   payment,
   status,
+  note,
   onOpenChat,
+  tab
 }) {
   const [showDetail, setShowDetail] = useState(false);
   const [showFormHiring, setShowFormHiring] = useState(false);
@@ -45,7 +47,6 @@ export default function BookedRow({
           params: { venue_id: venue_id },
         });
         if (response.data.success) {
-          console.log(response.data.data);
           setOwner(response.data.data);
         }
       } catch (error) {
@@ -100,25 +101,33 @@ export default function BookedRow({
           <span
             className={`inline-flex items-center gap-1 rounded-full px-3 py-1 ${status === "awaiting"
               ? "bg-purple-100 text-purple-600"
-              : "bg-green-100 text-green-600"
+              : status === "cancelled"
+                ? "bg-red-100 text-red-600"
+                : "bg-green-100 text-green-600"
               }`}
           >
             <span
-              className={`h-1.5 w-1.5 rounded-full ${status === "awaiting" ? "bg-purple-600" : "bg-green-600"
+              className={`h-1.5 w-1.5 rounded-full ${status === "awaiting"
+                ? "bg-purple-600"
+                : status === "cancelled"
+                  ? "bg-red-600"
+                  : "bg-green-600"
                 }`}
             ></span>
-            {status === "awaiting" ? "Awaiting" : "Accepted"}
+            {status === "awaiting" ? "Awaiting" : status === "cancelled" ? "Cancelled" : "Accepted"}
           </span>
         </td>
-        <td className="whitespace-nowrap px-6 py-4">
-          <button
-            className="inline-flex items-center gap-1 text-pink-600"
-            onClick={handleViewDetails}
-          >
-            <Eye className="h-4 w-4" />
-            View Details
-          </button>
-        </td>
+        {tab === "Sắp tới" && (
+          <td className="whitespace-nowrap px-6 py-4">
+            <button
+              className="inline-flex items-center gap-1 text-pink-600"
+              onClick={handleViewDetails}
+            >
+              <Eye className="h-4 w-4" />
+              View Details
+            </button>
+          </td>)}
+
         <td className="whitespace-nowrap px-6 py-4">
           <button
             className="inline-flex items-center gap-1 text-gray-600"
@@ -128,19 +137,22 @@ export default function BookedRow({
             Chat
           </button>
         </td>
-        <td className="whitespace-nowrap px-6 py-4">
-          <button
-            onClick={handleViewFormHiring}
-            disabled={isRecruited || status === "awaiting"}
-            className={`flex items-center gap-2 px-4 py-2 rounded text-white ${isRecruited || status === "awaiting"
+        {tab === "Sắp tới" && (
+          <td className="whitespace-nowrap px-6 py-4">
+            <button
+              onClick={handleViewFormHiring}
+              disabled={isRecruited || status === "awaiting" || status === "cancelled"}
+              className={`flex items-center gap-2 px-4 py-2 rounded text-white ${isRecruited || status === "awaiting" || status === "cancelled"
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-500 hover:bg-blue-600"
-              }`}
-          >
-            <UserPlus className="h-4 w-4" />
-            <span>{isRecruited ? "Đã tuyển" : "Tuyển"}</span>
-          </button>
-        </td>
+                }`}
+            >
+              <UserPlus className="h-4 w-4" />
+              <span>{isRecruited ? "Đã tuyển" : "Tuyển"}</span>
+            </button>
+          </td>
+        )}
+
         <td>
           {showDetail && (
             <BookingDetail

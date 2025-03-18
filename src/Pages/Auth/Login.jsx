@@ -26,6 +26,7 @@ export default function Login() {
             if (data.errors) {
                 setErrors(data.errors);
             } else {
+                console.log("TOKEN:", data.token);
                 localStorage.setItem("token", data.token);
                 setToken(data.token);
                 navigate("/");

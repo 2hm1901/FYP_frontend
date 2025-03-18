@@ -3,7 +3,7 @@ import Row from "./Row";
 import ChatComponent from "../../../Chat/ChatComponent"; // Import ChatComponent
 
 
-export default function Table({ bookings }) {
+export default function Table({ bookings, tab }) {
   const [values, setValues] = useState([]);
   const [showChat, setShowChat] = useState(false); // Trạng thái hiển thị chat
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -35,6 +35,8 @@ export default function Table({ bookings }) {
         time: `${formatTime(court.start_time)} - ${formatTime(court.end_time)}`,
         payment: `${court.price} VNĐ`,
         note: data.note,
+        tab,
+        status: court.status,
         createAt: formatDate(data.created_at),
       };
     });
@@ -76,11 +78,20 @@ export default function Table({ bookings }) {
       <table className="w-full">
         <thead className="bg-gray-50 text-sm">
           <tr>
-            {['Tên sân', 'Người đặt', 'Ngày & Giờ', 'Thanh toán', 'Nhắn tin', 'Ghi chú', ''].map((heading) => (
+            {tab === "Sắp tới" &&(
+              ['Tên sân', 'Người đặt', 'Ngày & Giờ', 'Thanh toán', 'Nhắn tin', 'Ghi chú', ''].map((heading) => (
               <th key={heading} className="whitespace-nowrap px-6 py-4 text-left font-medium text-gray-500">
                 {heading}
               </th>
-            ))}
+            ))
+            )}
+            {tab === "Đã huỷ" &&(
+              ['Tên sân', 'Người đặt', 'Ngày & Giờ', 'Thanh toán', 'Nhắn tin', 'Ghi chú', 'Trạng thái'].map((heading) => (
+              <th key={heading} className="whitespace-nowrap px-6 py-4 text-left font-medium text-gray-500">
+                {heading}
+              </th>
+            ))
+            )}
           </tr>
         </thead>
         <tbody className="divide-y text-sm">

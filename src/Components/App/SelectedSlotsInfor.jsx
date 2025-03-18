@@ -53,6 +53,7 @@ const SelectedSlotsInfo = ({ selectedInfo, courtPrices, selectedDate, venueName,
           start_time: startTime,
           end_time: endTime,
           price: amount,
+          status: "awaiting",
         });
       });
     });
@@ -64,8 +65,7 @@ const SelectedSlotsInfo = ({ selectedInfo, courtPrices, selectedDate, venueName,
       venue_location: venueLocation,
       courts_booked: courtsBooked,
       total_price: totalAmount,
-      booking_date: format(selectedDate, "dd/MM/yyyy"), // Get the time when the user presses the booking button
-      status: "awaiting",
+      booking_date: format(selectedDate, "dd/MM/yyyy"),
     };
   };
 
