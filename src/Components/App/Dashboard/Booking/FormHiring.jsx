@@ -74,8 +74,10 @@ export default function FormHiring({
     try {
       const response = await axios.post("/api/createGame", formData);
       toast.success("Game đã được tạo thành công!"); // Hiển thị toast thành công
-      console.log(response.data.message);
-      setTimeout(() => onClose(), 2000); // Đóng form sau 2 giây
+      setTimeout(() => {
+        onClose(); // Đóng form sau 2 giây
+        window.location.reload(); // Tải lại trang
+      }, 2000);
     } catch (error) {
       console.error("Error:", error);
       toast.error(error.response?.data?.message || "Không thể tạo game"); // Hiển thị toast lỗi
