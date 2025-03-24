@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Detail from "./Detail";
 import EditForm from "./Edit";
+import { useContext } from "react";
+import { AppContext } from "../../../../Context/AppContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -23,6 +25,7 @@ export default function Row({
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
+    const {user} = useContext(AppContext);
 
     const fetchVenue = async () => {
         try {
@@ -104,31 +107,35 @@ export default function Row({
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                     <div className="relative">
-                        <button
-                            className="rounded-lg p-2 hover:bg-gray-100"
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        >
-                            <MoreVertical className="h-4 w-4 text-gray-400" />
-                        </button>
+                        {user?.id === creator_id && (
+                            <>
+                                <button
+                                    className="rounded-lg p-2 hover:bg-gray-100"
+                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                >
+                                    <MoreVertical className="h-4 w-4 text-gray-400" />
+                                </button>
 
-                        {/* Dropdown Menu */}
-                        {isDropdownOpen && (
-                            <div className="absolute left-2 mt-2 w-30 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                                <button
-                                    onClick={handleEdit}
-                                    className="flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-150"
-                                >
-                                    <Edit className="h-4 w-4 mr-2 text-blue-500" />
-                                    <span>Edit</span>
-                                </button>
-                                <button
-                                    onClick={handleCancel}
-                                    className="flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-150"
-                                >
-                                    <X className="h-4 w-4 mr-2 text-red-500" />
-                                    <span>Cancel</span>
-                                </button>
-                            </div>
+                                {/* Dropdown Menu */}
+                                {isDropdownOpen && (
+                                    <div className="absolute left-2 mt-2 w-30 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                                        <button
+                                            onClick={handleEdit}
+                                            className="flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+                                        >
+                                            <Edit className="h-4 w-4 mr-2 text-blue-500" />
+                                            <span>Edit</span>
+                                        </button>
+                                        <button
+                                            onClick={handleCancel}
+                                            className="flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+                                        >
+                                            <X className="h-4 w-4 mr-2 text-red-500" />
+                                            <span>Cancel</span>
+                                        </button>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
                 </td>
@@ -146,6 +153,9 @@ export default function Row({
                     currentPlayers={current_players}
                     maxPlayers={max_players}
                     skillLevelRequired={skill_level_required}
+                    gameId={id}
+                    creatorId={creator_id}
+                    currentUserId={user?.id}
                 />
             )}
             {showEditForm && (

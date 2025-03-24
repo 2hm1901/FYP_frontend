@@ -24,7 +24,7 @@ export default function BookingInfoRenter() {
                 ...prev,
                 renter_name: user.username || "",
                 renter_email: user.email || "",
-                renter_phone: user.phone || "",
+                renter_phone: user.phone_number || "",
             }));
         }
     }, [user]);

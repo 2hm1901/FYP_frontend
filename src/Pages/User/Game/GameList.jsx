@@ -1,111 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../../../Layouts/Layout';
 import FilterNav from '../../../Components/App/FilterNav';
-import GameCard from '../../../Components/App/GameCard';
+import GameGrid from '../../../Components/App/GameGrid';
+import axios from 'axios';
 
 const GameList = () => {
-  return (
+    const [games, setGames] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchGames = async () => {
+            try {
+                const response = await axios.get('/api/getAllGame');
+                setGames(response.data);
+            } catch (error) {
+                console.error('Error fetching games:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchGames();
+    }, []);
+
+    const handleGameClick = (gameId) => {
+        navigate(`/gameDetail/${gameId}`);
+    };
+
+    return (
         <Layout>
             <div className="p-5 bg-gray-50 min-h-screen">
-            <FilterNav />
-            <div className="flex items-center justify-between mt-6">
-                <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
-                <GameCard
-                    host = {{ name: "Hai", karma: 110 }}
-                    type="Regular"
-                    slots="2"
-                    time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                    location="White Feathers Sport"
-                    distance="~8.77 Kms"
-                    level="Beginner - Professional"
-                    status="BOOKED"
-                />
+                <FilterNav />
+                <div className="mt-6">
+                    {loading ? (
+                        <p className="text-gray-500">Loading games...</p>
+                    ) : (
+                        <GameGrid games={games} onGameClick={handleGameClick} />
+                    )}
                 </div>
-                </div>
-                </div>
+            </div>
         </Layout>
-
-  );
+    );
 };
 
 export default GameList;

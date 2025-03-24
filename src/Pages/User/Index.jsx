@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../Layouts/Layout';
 import { FaChevronDown, FaChevronLeft, FaChevronRight, FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
 import bannerRight from '../../assets/banner-right.png';
 import VenueCard from '../../Components/App/VenueCard';
 import GameCard from '../../Components/App/GameCard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Index = () => {
+    const [venues, setVenues] = useState([]);
+    const [games, setGames] = useState([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [venuesResponse, gamesResponse] = await Promise.all([
+                    axios.get('/api/getAllVenue'),
+                    axios.get('/api/getAllGame')
+                ]);
+                setVenues(venuesResponse.data.slice(0, 5));
+                setGames(gamesResponse.data.slice(0, 5));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <Layout>
             <div className="bg-gradient-to-r from-green-800 to-blue-900 p-16">
@@ -37,141 +59,73 @@ const Index = () => {
                                 </Link>
                             </div>
                             <div className="relative">
-                                <div className="flex space-x-4 overflow-x-auto pb-4">
-                                    {/* Venue Cards */}
-                                    <VenueCard
-                                        image=""
-                                        title="Game Theory - Joseph's"
-                                        rating={4.67}
-                                        reviews={6}
-                                        location="Gate 3, No.2, Vittal M..."
-                                        distance="~0.13 Kms"
-                                    />
-                                    <VenueCard
-                                        image=""
-                                        title="Wellness Sports Inc"
-                                        rating={5.00}
-                                        reviews={4}
-                                        location="#1, Bhavya Plaza, 2nd..."
-                                        distance="~0.46 Kms"
-                                    />
-                                    <VenueCard
-                                        image=""
-                                        title="Wellness Sports Inc"
-                                        rating={5.00}
-                                        reviews={4}
-                                        location="#1, Bhavya Plaza, 2nd..."
-                                        distance="~0.46 Kms"
-                                    />
-                                    <VenueCard
-                                        image=""
-                                        title="Wellness Sports Inc"
-                                        rating={5.00}
-                                        reviews={4}
-                                        location="#1, Bhavya Plaza, 2nd..."
-                                        distance="~0.46 Kms"
-                                    />
-                                    <VenueCard
-                                        image=""
-                                        title="Wellness Sports Inc"
-                                        rating={5.00}
-                                        reviews={4}
-                                        location="#1, Bhavya Plaza, 2nd..."
-                                        distance="~0.46 Kms"
-                                    />
+                                <div id="venueCards" className="flex space-x-4 overflow-x-auto pb-4">
+                                    {venues.map((venue) => (
+                                        <VenueCard
+                                            key={venue.id}
+                                            image={venue.image}
+                                            name={venue.name}
+                                            rating={venue.rating}
+                                            reviews={venue.reviews_count}
+                                            location={venue.location}
+                                            distance={venue.distance}
+                                            onClick={() => navigate(`/venue/${venue.id}`)}
+                                        />
+                                    ))}
                                 </div>
                                 <div className="absolute -left-4 top-1/2 -translate-y-1/2">
-                                    <button className="rounded-full bg-white p-2" onClick={() => {
-                                        document.querySelector('.overflow-x-auto').scrollBy({ left: -200, behavior: 'smooth' });
-                                    }}>
-                                    <FaChevronLeft className="h-4 w-4" />
+                                    <button 
+                                        className="rounded-full bg-white p-2 shadow-md hover:bg-gray-100 transition duration-300"
+                                        onClick={() => document.querySelector('#venueCards').scrollBy({ left: -200, behavior: 'smooth' })}
+                                    >
+                                        <FaChevronLeft className="h-4 w-4" />
                                     </button>
                                 </div>
                                 <div className="absolute -right-4 top-1/2 -translate-y-1/2">
-                                    <button className="rounded-full bg-white p-2" onClick={() => {
-                                        document.querySelector('.overflow-x-auto').scrollBy({ left: 200, behavior: 'smooth' });
-                                    }}>
-                                    <FaChevronRight className="h-4 w-4" />
+                                    <button 
+                                        className="rounded-full bg-white p-2 shadow-md hover:bg-gray-100 transition duration-300"
+                                        onClick={() => document.querySelector('#venueCards').scrollBy({ left: 200, behavior: 'smooth' })}
+                                    >
+                                        <FaChevronRight className="h-4 w-4" />
                                     </button>
                                 </div>
                             </div>
                         </section>
                     </div>
+
                     {/* Games Section */}
                     <div className="w-full space-y-8">
                         <section>
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-2xl font-semibold text-black">Book Games</h2>
-                                <Link to='/games' className="text-emerald-500 font-medium flex items-center">
+                                <Link to='/game' className="text-emerald-500 font-medium flex items-center">
                                     SEE ALL GAMES
                                     <FaChevronRight className="ml-1 h-4 w-4" />
                                 </Link>
                             </div>
                             <div className="relative">
-                                <div id='gameCards' className="flex space-x-4 overflow-x-auto pb-4">
-                                    {/* Game Cards */}
-                                    <GameCard
-                                        host = {{ name: "Hai", karma: 110 }}
-                                        type="Regular"
-                                        slots="2"
-                                        time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                                        location="White Feathers Sport"
-                                        distance="~8.77 Kms"
-                                        level="Beginner - Professional"
-                                        status="BOOKED"
-                                    />
-                                    <GameCard
-                                        host = {{ name: "Hai", karma: 110 }}
-                                        type="Regular"
-                                        slots="2"
-                                        time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                                        location="White Feathers Sport"
-                                        distance="~8.77 Kms"
-                                        level="Beginner - Professional"
-                                        status="BOOKED"
-                                    />
-                                    <GameCard
-                                        host = {{ name: "Hai", karma: 110 }}
-                                        type="Regular"
-                                        slots="2"
-                                        time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                                        location="White Feathers Sport"
-                                        distance="~8.77 Kms"
-                                        level="Beginner - Professional"
-                                        status="BOOKED"
-                                    />
-                                    <GameCard
-                                        host = {{ name: "Hai", karma: 110 }}
-                                        type="Regular"
-                                        slots="2"
-                                        time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                                        location="White Feathers Sport"
-                                        distance="~8.77 Kms"
-                                        level="Beginner - Professional"
-                                        status="BOOKED"
-                                    />
-                                    <GameCard
-                                        host = {{ name: "Hai", karma: 110 }}
-                                        type="Regular"
-                                        slots="2"
-                                        time="Wed, 11 Dec 2024, 01:30 PM - 02:30 PM"
-                                        location="White Feathers Sport"
-                                        distance="~8.77 Kms"
-                                        level="Beginner - Professional"
-                                        status="UNBOOKED"
-                                    />
+                                <div id="gameCards" className="flex space-x-4 overflow-x-auto pb-4">
+                                    {games.map((game) => (
+                                        <GameCard
+                                            key={game.id}
+                                            game={game}
+                                            onClick={() => navigate(`/gameDetail/${game.id}`)}
+                                        />
+                                    ))}
                                 </div>
                                 <div className="absolute -left-4 top-1/2 -translate-y-1/2">
-                                    <button className="rounded-full bg-white p-2" onClick={() => {
-                                        document.querySelector('#gameCards').scrollBy({ left: -200, behavior: 'smooth' });
-                                    }}>
+                                    <button 
+                                        className="rounded-full bg-white p-2 shadow-md hover:bg-gray-100 transition duration-300"
+                                        onClick={() => document.querySelector('#gameCards').scrollBy({ left: -200, behavior: 'smooth' })}
+                                    >
                                         <FaChevronLeft className="h-4 w-4" />
                                     </button>
                                 </div>
                                 <div className="absolute -right-4 top-1/2 -translate-y-1/2">
-                                    <button className="rounded-full bg-white p-2" onClick={() => {
-                                        document.querySelector('#gameCards').scrollBy({ left: 200, behavior: 'smooth' });
-                                    }}>
+                                    <button 
+                                        className="rounded-full bg-white p-2 shadow-md hover:bg-gray-100 transition duration-300"
+                                        onClick={() => document.querySelector('#gameCards').scrollBy({ left: 200, behavior: 'smooth' })}
+                                    >
                                         <FaChevronRight className="h-4 w-4" />
                                     </button>
                                 </div>

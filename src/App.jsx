@@ -24,6 +24,7 @@ import BookedCourt from './Pages/User/Manager/Renter/Booking/BookedCourt';
 import ListGame from './Pages/User/Manager/Renter/Games/ListGame';
 import ListBooking from './Pages/User/Manager/Owner/Booking/List';
 import ListRequest from './Pages/User/Manager/Owner/Request/List';
+import UserProfile from './Pages/Profile/UserProfile';
 
 import ShowCourt from './Pages/User/Manager/Owner/Court/ShowCourt';
 
@@ -42,6 +43,7 @@ export default function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route path="/profile" element={<Settings />} />
+      <Route path="/profile/:userId" element={<UserProfile />} />
 
       <Route path="/venue" element={<VenueList />} />
       <Route path="/venueDetail/:id" element={<VenueDetail />} />
@@ -56,7 +58,7 @@ export default function App() {
       <Route path="/my_games" element={<ListGame />} />
 
       <Route path="/game" element={<GameList />} />
-      <Route path="/gameDetail" element={<GameDetail />} />
+      <Route path="/gameDetail/:gameId" element={<GameDetail />} />
 
       {/* Owner */}
 

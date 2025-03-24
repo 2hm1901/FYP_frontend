@@ -14,15 +14,12 @@ export default function ListGame() {
         if (user) {
             fetchGames();
         }
-    }
-    , [user]);
+    }, [user]);
 
     const fetchGames = async () => {
         try {
-            const response = await axios.get(`/api/getGames`, {
-                params: { user_id: user?.id }
-            });
-            setGames(response.data);
+            const response = await axios.get(`/api/getParticipatingGames/${user.id}`);
+            setGames(response.data.data);
         } catch (error) {
             console.error('Error fetching games:', error);
         }
@@ -35,8 +32,8 @@ export default function ListGame() {
                 <div className="rounded-xl bg-white p-6 shadow-sm">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Sân đã đặt</h1>
-                            <p className="text-gray-500">Quản lý và theo dõi tất cả các đặt chỗ sân sắp tới của bạn</p>
+                            <h1 className="text-2xl font-bold text-gray-900">Game đang tham gia</h1>
+                            <p className="text-gray-500">Danh sách các game bạn đang tham gia</p>
                         </div>
                     </div>
                     <Table games={games} />
