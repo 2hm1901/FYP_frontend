@@ -72,24 +72,49 @@ export default function Detail({
     }
   };
 
+  const handleKickPlayer = async (userId) => {
+    try {
+      await axios.post('/api/kickPlayer', {
+        game_id: gameId,
+        user_id: userId,
+        creator_id: creatorId
+      });
+      
+      toast.success('Đã kick người chơi thành công');
+      await fetchGameData();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi kick người chơi');
+    }
+  };
+
   const renderParticipant = (participant) => (
     <div
       key={participant.user_id}
-      className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"
+      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
     >
-      <img
-        src={`http://localhost:8000/storage/avatars/${participant.avatar}` || picture}
-        alt={participant.username}
-        width={40}
-        height={40}
-        className="rounded-full border-2 border-gray-300"
-      />
-      <div>
-        <p className="font-medium text-gray-800">{participant.username}</p>
-        {participant.user_id === creatorId && (
-          <p className="text-sm text-gray-500">Host</p>
-        )}
+      <div className="flex items-center gap-4">
+        <img
+          src={`http://localhost:8000/storage/avatars/${participant.avatar}` || picture}
+          alt={participant.username}
+          width={40}
+          height={40}
+          className="rounded-full border-2 border-gray-300"
+        />
+        <div>
+          <p className="font-medium text-gray-800">{participant.username}</p>
+          {participant.user_id === creatorId && (
+            <p className="text-sm text-gray-500">Host</p>
+          )}
+        </div>
       </div>
+      {currentUserId === creatorId && participant.user_id !== creatorId && (
+        <button
+          onClick={() => handleKickPlayer(participant.user_id)}
+          className="text-red-500 hover:text-red-700 transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      )}
     </div>
   );
 
