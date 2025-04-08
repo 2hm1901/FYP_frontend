@@ -3,7 +3,7 @@ import InputError from "../../Components/Ui/InputError";
 import InputLabel from "../../Components/Ui/InputLabel";
 import TextInput from "../../Components/Ui/TextInput";
 import { ThumbsUp, Mail, Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { AppContext } from "../../Context/AppContext";
 
@@ -137,15 +137,15 @@ export default function Login() {
 
                     <p className="text-center text-sm text-gray-600">
                         Don’t have an account?{" "}
-                        <a href="/register" className="text-indigo-600 hover:underline font-medium">
+                        <Link to="/register" className="text-indigo-600 hover:underline font-medium">
                             Sign up
-                        </a>
+                        </Link>
                     </p>
                     <p className="text-center text-sm text-gray-600">
                         Don’t remember your password?{" "}
-                        <a href="/forgot-password" className="text-indigo-600 hover:underline font-medium">
+                        <Link to="/forgot-password" className="text-indigo-600 hover:underline font-medium">
                             Reset Password
-                        </a>
+                        </Link>
                     </p>
                 </div>
             </div>

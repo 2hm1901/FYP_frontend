@@ -9,7 +9,7 @@ const NotificationDropdown = ({ notifications, setNotifications, token, user }) 
     const handleMarkAsRead = async (notificationId) => {
         try {
             await axios.post(
-                'http://127.0.0.1:8000/api/notifications/mark-read',
+                '/api/notifications/mark-read',
                 { notification_id: notificationId },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

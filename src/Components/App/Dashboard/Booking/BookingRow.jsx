@@ -81,7 +81,7 @@ export default function BookedRow({
       <tr>
         <td className="whitespace-nowrap px-6 py-4 flex items-center gap-3">
           <img
-            src={owner?.avatar ? `http://localhost:8000/storage/avatars/${owner.avatar}` : "/placeholder.svg"}
+            src={owner?.avatar ? `/api/avatar/${owner.avatar}` : "/placeholder.svg"}
             alt={name}
             className="w-12 h-12 rounded-lg"
           />
@@ -157,7 +157,7 @@ export default function BookedRow({
           {showDetail && (
             <BookingDetail
               onClose={handleCloseDetail}
-              image={owner?.avatar ? `http://localhost:8000${owner.avatar}` : "/placeholder.svg"}
+              image={owner?.avatar ? `/api/avatar/${owner.avatar}` : "/placeholder.svg"}
               name={name}
               location={location}
               court={court}

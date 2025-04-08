@@ -31,7 +31,7 @@ import ShowCourt from './Pages/User/Manager/Owner/Court/ShowCourt';
 export default function App() {
   const { user } = useContext(AppContext);
   return (
-  <BrowserRouter>
+  <BrowserRouter basename='/frontend/'>
     <Routes>
       <Route path="/" element={<Index />} />
 

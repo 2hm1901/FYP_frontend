@@ -81,7 +81,7 @@ export default function Row({
     <tr>
       <td className="whitespace-nowrap px-6 py-4 flex items-center gap-3">
         <img
-          src={owner?.avatar ? `http://localhost:8000/storage/avatars/${owner.avatar}` : "/placeholder.svg"}
+          src={owner?.avatar ? `/api/avatar/${owner.avatar}` : "/placeholder.svg"}
           alt={name}
           className="w-12 h-12 rounded-lg"
         />
@@ -95,7 +95,7 @@ export default function Row({
       <td className="whitespace-nowrap px-6 py-4 items-center gap-3">
         <div className="flex">
           <img
-            src={renter?.avatar ? `http://localhost:8000/storage/avatars/${renter.avatar}` : "/placeholder.svg"}
+            src={renter?.avatar ? `/api/avatar/${renter.avatar}` : "/placeholder.svg"}
             alt={renter?.username}
             className="w-12 h-12 rounded-lg"
           />

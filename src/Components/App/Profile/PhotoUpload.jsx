@@ -8,7 +8,7 @@ export default function PhotoUpload({ onPhotoChange, initialAvatar }) {
   // Hiển thị avatar ban đầu từ user nếu có
   useEffect(() => {
     if (initialAvatar) {
-      setPhotoPreview(`http://localhost:8000/storage/avatars/${initialAvatar}`);
+      setPhotoPreview(`/api/avatar/${initialAvatar}`);
     }
   }, [initialAvatar]);
 

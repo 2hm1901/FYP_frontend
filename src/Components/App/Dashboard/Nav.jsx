@@ -19,7 +19,7 @@ export default function Nav() {
       href: user?.user_type === "owner" ? "/view_bookings" : "/bookings",
     },
     ...(user?.user_type === "renter"
-      ? [{ name: "Game đã tham gia", icon: Gamepad2, href: "/my_games" }]
+      ? [{ name: "Game đã tạo", icon: Gamepad2, href: "/my_games" }]
       : []),
     { name: "Yêu Cầu", icon: Clock, href: "/requests" },
     { name: "Chat", icon: MessageSquare, href: "/chat" },
