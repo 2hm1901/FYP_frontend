@@ -30,6 +30,16 @@ export const useProfileUpdate = (token, setUser) => {
       submitData.avatar = formData.avatar;
     }
 
+    // Thêm thông tin ngân hàng nếu người dùng là chủ sân
+    if (formData.user_type === "owner") {
+      submitData.account_number = formData.account_number;
+      submitData.bank_name = formData.bank_name;
+      
+      if (formData.qr_code && formData.qr_code.startsWith("data:image")) {
+        submitData.qr_code = formData.qr_code;
+      }
+    }
+
     try {
       console.log(submitData);
       const response = await axios.put("/api/updateProfile", submitData, {

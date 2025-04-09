@@ -38,6 +38,7 @@ export default function Table({ bookings }) {
       payment: `${data.total_price} VNĐ`, // Tổng giá
       note: data.note,
       createAt: formatDate(data.created_at),
+      payment_image: data.payment_image,
     }];
   };
 
