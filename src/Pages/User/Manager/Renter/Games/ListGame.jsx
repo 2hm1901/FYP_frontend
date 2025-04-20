@@ -34,6 +34,7 @@ export default function ListGame() {
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">Game đang tham gia</h1>
                             <p className="text-gray-500">Danh sách các game bạn đang tham gia</p>
+                            <p className="text-gray-500 mt-2">Điểm hiện tại: {user?.point || 0}</p>
                         </div>
                     </div>
                     <Table games={games} />

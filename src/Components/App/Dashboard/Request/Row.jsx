@@ -69,8 +69,14 @@ export default function Row({
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
       if (response.data.success) {
+        // Tăng điểm cho người đặt sân
+        await axios.post(
+          '/api/users/add-points',
+          { user_id: user_id, points: 10 },
+          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        );
         console.log("Booking accepted:", response.data);
-        window.location.reload(); // Reload the page after successful action
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error accepting booking:", error);

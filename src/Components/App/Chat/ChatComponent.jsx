@@ -4,10 +4,10 @@ import axios from 'axios';
 import { AppContext } from '../../../Context/AppContext';
 
 function ChatComponent({otherUserId, isOpen, onClose}) {
-    const popupRef = useRef(null);
+    const chatboxRef = useRef(null);
     const [currentUser, setCurrentUser] = useState(null);
     const [otherUser, setOtherUser] = useState(null);
-    const [popup, setPopup] = useState(null);
+    const [chatbox, setChatbox] = useState(null);
     const {user} = useContext(AppContext);
 
     // Lấy thông tin người dùng
@@ -19,90 +19,61 @@ function ChatComponent({otherUserId, isOpen, onClose}) {
         }).catch(error => console.error('Error fetching other user:', error));
     }, [user]);
 
-    // Khởi tạo TalkJS Popup
+    // Khởi tạo TalkJS Chatbox
     useEffect(() => {
         if (!currentUser || !otherUser || !isOpen) {
-            if (popup) {
-                popup.hide();
+            if (chatbox) {
+                chatbox.destroy();
             }
-            return;
-        }
-
-        // Kiểm tra dữ liệu trước khi khởi tạo
-        if (!currentUser.id || !currentUser.username || !currentUser.email) {
-            console.error('Invalid currentUser data:', currentUser);
-            return;
-        }
-        if (!otherUser.id || !otherUser.username || !otherUser.email) {
-            console.error('Invalid otherUser data:', otherUser);
             return;
         }
 
         Talk.ready.then(() => {
-            try {
-                const me = new Talk.User({
-                    id: currentUser.id.toString(),
-                    name: currentUser.username,
-                    email: currentUser.email,
-                    role: 'default',
-                });
+            const me = new Talk.User({
+                id: currentUser.id.toString(),
+                name: currentUser.username,
+                email: currentUser.email,
+                role: 'default',
+            });
 
-                const session = new Talk.Session({
-                    appId: 'tvZvoxPA',
-                    me: me,
-                });
+            const session = new Talk.Session({
+                appId: 'tvZvoxPA',
+                me: me,
+            });
 
-                const other = new Talk.User({
-                    id: otherUser.id.toString(),
-                    name: otherUser.username,
-                    email: otherUser.email,
-                    role: 'default',
-                });
+            const other = new Talk.User({
+                id: otherUser.id.toString(),
+                name: otherUser.username,
+                email: otherUser.email,
+                role: 'default',
+            });
 
-                const conversation = session.getOrCreateConversation(
-                    Talk.oneOnOneId(me, other),
-                    { participants: [me, other] }
-                );
-                conversation.setParticipant(me);
-                conversation.setParticipant(other);
+            const conversation = session.getOrCreateConversation(
+                Talk.oneOnOneId(me, other)
+            );
+            conversation.setParticipant(me);
+            conversation.setParticipant(other);
 
-                // Tạo popup thay vì chatbox
-                const talkPopup = session.createPopup(conversation, {
-                    launcher: 'hide', // Ẩn nút launcher mặc định
-                    keepOpen: false, // Đóng popup khi nhấn nút close
-                    width: 400, // Chiều rộng popup (px)
-                    height: 500, // Chiều cao popup (px)
-                });
+            const chatbox = session.createChatbox(conversation);
+            chatbox.mount(chatboxRef.current);
+            setChatbox(chatbox);
 
-                // Thêm delay để đảm bảo WebSocket sẵn sàng
-                setTimeout(() => {
-                    console.log('Mounting TalkJS popup');
-                    talkPopup.mount(popupRef.current);
-                    talkPopup.show();
-                    setPopup(talkPopup);
-                }, 2000);
-
-                // Xử lý thông báo
-                session.unreads.on('change', unreadConversations => {
-                    const unreadCount = unreadConversations.length;
-                    console.log('Số tin nhắn chưa đọc:', unreadCount);
-                    if (unreadCount > 0) {
-                        alert(`Bạn có ${unreadCount} tin nhắn chưa đọc!`);
-                    }
-                });
-
-                // Cleanup khi component unmount
-                return () => {
-                    talkPopup.destroy();
-                };
-            } catch (error) {
-                console.error('TalkJS initialization error:', error);
-            }
-        }).catch(error => console.error('TalkJS loading error:', error));
+            return () => chatbox.destroy();
+        });
     }, [currentUser, otherUser, isOpen]);
 
     return (
-        <div ref={popupRef} style={{ position: 'fixed', bottom: '10px', right: '10px' }} />
+        <div className="fixed bottom-0 right-0 w-96 h-[500px] bg-white shadow-lg rounded-t-lg overflow-hidden">
+            <div className="flex justify-between items-center p-4 bg-gray-100">
+                <h3 className="font-semibold">Chat với {otherUser?.username}</h3>
+                <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div ref={chatboxRef} className="h-[calc(100%-3rem)]" />
+        </div>
     );
 }
 

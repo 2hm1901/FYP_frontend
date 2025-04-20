@@ -101,6 +101,34 @@ export default function GameDetail() {
                                     {hasJoined ? 'Đã tham gia' : 'Yêu cầu tham gia'}
                                 </button>
                             </div>
+                            
+                            {/* Hiển thị QR code nếu có */}
+                            {game.qr_code && (
+                                <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                                    <h3 className="text-lg font-medium text-gray-800 mb-2">Mã QR thanh toán</h3>
+                                    <div className="flex justify-center">
+                                        <img 
+                                            src={`/api/qr_codes/${game.qr_code}`} 
+                                            alt="QR Code" 
+                                            className="max-w-xs border border-gray-300 rounded-lg"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Hiển thị ảnh thanh toán nếu có */}
+                            {game.payment_image && (
+                                <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                                    <h3 className="text-lg font-medium text-gray-800 mb-2">Ảnh xác nhận thanh toán</h3>
+                                    <div className="flex justify-center">
+                                        <img 
+                                            src={`/api/payment_images/${game.payment_image}`} 
+                                            alt="Payment Image" 
+                                            className="max-w-xs border border-gray-300 rounded-lg"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -117,7 +145,7 @@ export default function GameDetail() {
                                         onClick={() => handleParticipantClick(participant.user_id)}
                                     >
                                         <img
-                                            src={`http://localhost:8000/storage/avatars/${participant.avatar}` || picture}
+                                            src={participant.avatar ? `/api/avatar/${participant.avatar}` : picture}
                                             alt={participant.username}
                                             width={40}
                                             height={40}

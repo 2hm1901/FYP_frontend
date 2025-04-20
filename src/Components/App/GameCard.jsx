@@ -32,7 +32,7 @@ function GameCard({ game, onClick }) {
                         </div>
                     </div>
                     <div className="text-sm text-gray-500">
-                            {creator.username} | 110 Karma
+                            {creator.username} | {creator.point || 0} Điểm
                         </div>
                 </div>
                 <div className="space-y-2 text-sm">
