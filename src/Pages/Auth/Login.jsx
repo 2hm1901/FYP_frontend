@@ -17,24 +17,37 @@ export default function Login() {
     });
 
     const [errors, setErrors] = useState({});
+    const [authError, setAuthError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     async function handleLogin(e) {
         e.preventDefault();
+        setErrors({});
+        setAuthError("");
+        
         try {
             const { data } = await axios.post("/api/login", formData);
             if (data.errors) {
                 setErrors(data.errors);
+            } else if (data.success === false) {
+                setAuthError(data.message);
             } else {
-                console.log("TOKEN:", data.token);
                 localStorage.setItem("token", data.token);
                 setToken(data.token);
                 navigate("/");
             }
         } catch (error) {
             console.error("Login failed:", error);
-            if (error.response && error.response.data.errors) {
-                setErrors(error.response.data.errors);
+            if (error.response) {
+                if (error.response.data.errors) {
+                    setErrors(error.response.data.errors);
+                } else if (error.response.data.message) {
+                    setAuthError(error.response.data.message);
+                } else if (error.response.data.success === false) {
+                    setAuthError(error.response.data.message || "Đăng nhập thất bại");
+                }
+            } else {
+                setAuthError("Lỗi kết nối đến máy chủ");
             }
         }
     }
@@ -72,6 +85,21 @@ export default function Login() {
                             Log in to your DreamSports account and get started.
                         </p>
                     </div>
+
+                    {authError && (
+                        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                            <div className="flex">
+                                <div className="flex-shrink-0">
+                                    <svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div className="ml-3">
+                                    <p className="text-sm text-red-700">{authError}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <form className="space-y-6" onSubmit={handleLogin}>
                         {/* Email */}
@@ -136,13 +164,13 @@ export default function Login() {
                     </form>
 
                     <p className="text-center text-sm text-gray-600">
-                        Don’t have an account?{" "}
+                        Don't have an account?{" "}
                         <Link to="/register" className="text-indigo-600 hover:underline font-medium">
                             Sign up
                         </Link>
                     </p>
                     <p className="text-center text-sm text-gray-600">
-                        Don’t remember your password?{" "}
+                        Don't remember your password?{" "}
                         <Link to="/forgot-password" className="text-indigo-600 hover:underline font-medium">
                             Reset Password
                         </Link>

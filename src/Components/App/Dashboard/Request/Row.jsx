@@ -17,6 +17,7 @@ export default function Row({
   const [owner, setOwner] = useState({});
   const [renter, setRenter] = useState({});
   const [showPaymentImage, setShowPaymentImage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchVenueOwnerInfo = async () => {
@@ -62,24 +63,51 @@ export default function Row({
     const confirmed = window.confirm("Bạn có chắc muốn chấp nhận yêu cầu đặt sân này?");
     if (!confirmed) return;
 
+    setIsLoading(true);
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Bạn cần đăng nhập để thực hiện chức năng này!");
+        setIsLoading(false);
+        return;
+      }
+
       const response = await axios.post(
         '/api/bookings/accept',
         { booking_id: id },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        { 
+          headers: { Authorization: `Bearer ${token}` }
+        }
       );
+      
       if (response.data.success) {
         // Tăng điểm cho người đặt sân
         await axios.post(
           '/api/users/add-points',
           { user_id: user_id, points: 10 },
-          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log("Booking accepted:", response.data);
+        alert("Đã chấp nhận yêu cầu đặt sân thành công!");
         window.location.reload();
       }
     } catch (error) {
       console.error("Error accepting booking:", error);
+      if (error.response) {
+        if (error.response.status === 404) {
+          alert("Không tìm thấy đơn đặt sân hoặc API endpoint không tồn tại. Vui lòng kiểm tra lại!");
+        } else if (error.response.status === 401) {
+          alert("Bạn không có quyền thực hiện hành động này hoặc phiên đăng nhập đã hết hạn!");
+        } else if (error.response.data && error.response.data.message) {
+          alert(`Lỗi: ${error.response.data.message}`);
+        } else {
+          alert("Đã xảy ra lỗi khi chấp nhận đơn đặt sân. Vui lòng thử lại sau!");
+        }
+      } else {
+        alert("Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng!");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,18 +115,43 @@ export default function Row({
     const confirmed = window.confirm("Bạn có chắc muốn từ chối yêu cầu đặt sân này?");
     if (!confirmed) return;
 
+    setIsLoading(true);
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Bạn cần đăng nhập để thực hiện chức năng này!");
+        setIsLoading(false);
+        return;
+      }
+
       const response = await axios.post(
         '/api/bookings/decline',
         { booking_id: id },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
+      
       if (response.data.success) {
         console.log("Booking declined:", response.data);
+        alert("Đã từ chối yêu cầu đặt sân thành công!");
         window.location.reload(); 
       }
     } catch (error) {
       console.error("Error declining booking:", error);
+      if (error.response) {
+        if (error.response.status === 404) {
+          alert("Không tìm thấy đơn đặt sân hoặc API endpoint không tồn tại. Vui lòng kiểm tra lại!");
+        } else if (error.response.status === 401) {
+          alert("Bạn không có quyền thực hiện hành động này hoặc phiên đăng nhập đã hết hạn!");
+        } else if (error.response.data && error.response.data.message) {
+          alert(`Lỗi: ${error.response.data.message}`);
+        } else {
+          alert("Đã xảy ra lỗi khi từ chối đơn đặt sân. Vui lòng thử lại sau!");
+        }
+      } else {
+        alert("Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng!");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -165,17 +218,19 @@ export default function Row({
           <div className="flex gap-2">
             <button
               onClick={handleAccept}
-              className="inline-flex items-center justify-center rounded-xl bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              disabled={isLoading}
+              className={`inline-flex items-center justify-center rounded-xl ${isLoading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'} px-3 py-1.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
             >
               <Check className="mr-1 h-4 w-4" />
-              Accept
+              {isLoading ? "Đang xử lý..." : "Accept"}
             </button>
             <button
               onClick={handleDecline}
-              className="inline-flex items-center justify-center rounded-xl bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              disabled={isLoading}
+              className={`inline-flex items-center justify-center rounded-xl ${isLoading ? 'bg-gray-400' : 'bg-red-600 hover:bg-red-700'} px-3 py-1.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2`}
             >
               <X className="mr-1 h-4 w-4" />
-              Decline
+              {isLoading ? "Đang xử lý..." : "Decline"}
             </button>
           </div>
         </td>
